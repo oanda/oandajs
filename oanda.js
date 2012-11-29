@@ -12,11 +12,11 @@ OANDA.user.register = function(username, password, firstName, lastName, email, c
 }
 
 OANDA.user.register_zero = function(currency, callback) {
-    $.getJSON(OANDA.baseURL + "/v1/user/register.json?callback=?", {currency: currency}, function(response, textStatus) {
+    $.post(OANDA.baseURL + "/v1/users?", {currency: currency}, function(response, textStatus) {
         if(callback) {
             callback(response);
         }
-    });
+    }, 'json');
 }
 
 OANDA.user.login = function(username, password, callback) {
