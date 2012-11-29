@@ -157,8 +157,8 @@ OANDA.position.close = function(sessionToken, accountId, symbol, callback) {
 
 OANDA.account = OANDA.account || {};
 
-OANDA.account.list = function(sessionToken, callback) {
-    $.getJSON(OANDA.baseURL + "/v1/account/list.json?callback=?", {session_token: sessionToken}, function(response, textStatus) {
+OANDA.account.list = function(username, callback) {
+    $.getJSON(OANDA.baseURL + "/v1/accounts", {username: username}, function(response, textStatus) {
         if(callback) {
             callback(response);
         }
