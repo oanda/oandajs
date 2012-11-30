@@ -3,58 +3,26 @@ OANDA.baseURL = OANDA.baseURL || "http://api-sandbox.oanda.com";
 
 OANDA.user = OANDA.user || {};
 
-OANDA.user.register = function(username, password, firstName, lastName, email, currency, callback) {
-    $.getJSON(OANDA.baseURL + "/v1/user/register.json?callback=?", {username: username, password: password, first_name: firstName, last_name: lastName, email: email, currency: currency}, function(response, textStatus) {
-        if(callback) {
-            callback(response);
-        }
-    });
-}
-
 OANDA.user.register_zero = function(currency, callback) {
-    $.post(OANDA.baseURL + "/v1/users?", {currency: currency}, function(response, textStatus) {
+    $.post(OANDA.baseURL + "/v1/users", {currency: currency}, function(response, textStatus) {
         if(callback) {
             callback(response);
         }
     }, 'json');
 }
 
-OANDA.user.login = function(username, password, callback) {
-    $.getJSON(OANDA.baseURL + "/v1/user/login.json?callback=?", {username: username, password: password, api_key: OANDA.apiKey}, function(response, textStatus) {
-        if(callback) {
-            callback(response);
-        }
-    });
-}
-
-OANDA.user.send_otp = function(sessionToken, username, callback) {
-    $.getJSON(OANDA.baseURL + "/v1/user/send_otp.json?callback=?", {session_token: sessionToken, username: username}, function(response, textStatus) {
-        if(callback) {
-            callback(response);
-        }
-    });
-}
-
-OANDA.user.upgrade_token = function(sessionToken, username, otp, callback) {
-    $.getJSON(OANDA.baseURL + "/v1/user/login.json?callback=?", {username: username, session_token: sessionToken, one_time_password: otp, api_key: OANDA.apiKey}, function(response, textStatus) {
-        if(callback) {
-            callback(response);
-        }
-    });
-}
-
-OANDA.user.logout = function(sessionToken, callback) {
-    $.getJSON(OANDA.baseURL + "/v1/user/logout.json?callback=?", {session_token: sessionToken}, function(response, textStatus) {
-        if(callback) {
-            callback(response);
-        }
-    });
-}
-
 OANDA.transaction = OANDA.transaction || {};
 
-OANDA.transaction.list = function(sessionToken, accountId, callback) {
-    $.getJSON(OANDA.baseURL + "/v1/transaction/list.json?callback=?", {account_id: accountId, session_token: sessionToken}, function(response, textStatus) {
+OANDA.transaction.list = function(accountId, callback) {
+    $.getJSON(OANDA.baseURL + "/v1/accounts/" + accountId + "/transactions", {}, function(response, textStatus) {
+        if(callback) {
+            callback(response);
+        }
+    });
+}
+
+OANDA.transaction.listSpecific = function(accountId, transId, callback) {
+    $.getJSON(OANDA.baseURL + "/v1/accounts/" + accountId + "/transactions/" + transId, {}, function(response, textStatus) {
         if(callback) {
             callback(response);
         }
@@ -63,15 +31,15 @@ OANDA.transaction.list = function(sessionToken, accountId, callback) {
 
 OANDA.trade = OANDA.trade || {};
 
-OANDA.trade.list = function(sessionToken, accountId, callback) {
-    $.getJSON(OANDA.baseURL + "/v1/trade/list.json?callback=?", {account_id: accountId, session_token: sessionToken}, function(response, textStatus) {
+OANDA.trade.list = function(accountId, callback) {
+    $.getJSON(OANDA.baseURL + "/v1/accounts/" + accountId + "/trades", {}, function(response, textStatus) {
         if(callback) {
             callback(response);
         }
     });
 }
 
-OANDA.trade.list_specific = function(sessionToken, accountId, tradeIds, callback) {
+OANDA.trade.listSpecific = function(accountId, tradeIds, callback) {
     var needComma = false;
     var tradesStr = "";
     for(var cur in tradeIds) {
@@ -81,78 +49,127 @@ OANDA.trade.list_specific = function(sessionToken, accountId, tradeIds, callback
         tradesStr += tradeIds[cur];
         needComma = true;
     }
-    $.getJSON(OANDA.baseURL + "/v1/trade/list.json?callback=?", {account_id: accountId, session_token: sessionToken, trade_ids: tradesStr}, function(response, textStatus) {
+    $.getJSON(OANDA.baseURL + "/v1/accounts/" + accountId + "/trades", {tradeIds: tradesStr}, function(response, textStatus) {
         if(callback) {
             callback(response);
         }
     });
 }
 
-OANDA.trade.open = function(sessionToken, accountId, symbol, units, callback) {
-    $.getJSON(OANDA.baseURL + "/v1/trade/open.json?callback=?", {account_id: accountId, symbol: symbol, units: units, session_token: sessionToken}, function(response, textStatus) {
+OANDA.trade.open = function(accountId, instrument, units, callback) {
+    $.post(OANDA.baseURL + "/v1/accounts/" + accountId + "/trades", {instrument: instrument, units: units}, function(response, textStatus) {
+        if(callback) {
+            callback(response);
+        }
+    }, 'json');
+}
+
+OANDA.trade.close = function(accountId, tradeId, callback) {
+    $.ajax({
+        url: OANDA.baseURL + "/v1/accounts/" + accountId + "/trades/" + tradeId,
+        type: 'DELETE',
+        success: function(response, textStatus) {
+        if(callback) {
+            callback(response);
+        }}});
+}
+
+OANDA.trade.change = function(accountId, tradeId, stopLoss, takeProfit, trailingStop, callback) {
+    $.ajax({
+        url: OANDA.baseURL + "/v1/accounts/" + accountId + "/trades/" + tradeId,
+        data: {stop_loss: stopLoss, take_profit: takeProfit, trailing_stop: trailingStop},
+        type: 'PUT',
+        success:function(response, textStatus) {
+        if(callback) {
+            callback(response);
+        }}});
+}
+
+OANDA.order = OANDA.order || {};
+
+OANDA.order.list = function(accountId, callback) {
+    $.getJSON(OANDA.baseURL + "/v1/accounts/" + accountId + "/orders", {}, function(response, textStatus) {
         if(callback) {
             callback(response);
         }
     });
 }
 
-OANDA.trade.close = function(sessionToken, accountId, tradeId, callback) {
-    $.getJSON(OANDA.baseURL + "/v1/trade/close.json?callback=?", {account_id: accountId, trade_id: tradeId, session_token: sessionToken}, function(response, textStatus) {
-        if(callback) {
-            callback(response);
-        }
-    });
-}
-
-OANDA.trade.change = function(sessionToken, accountId, tradeId, stopLoss, takeProfit, trailingStop, callback) {
-    $.getJSON(OANDA.baseURL + "/v1/trade/change.json?callback=?", {account_id: accountId, trade_id: tradeId, stop_loss: stopLoss, take_profit: takeProfit, trailing_stop: trailingStop, session_token: sessionToken}, function(response, textStatus) {
-        if(callback) {
-            callback(response);
-        }
-    });
-}
-
-OANDA.trade.poll = function(sessionToken, accountId, maxTradeId,  callback) {
-    $.getJSON(OANDA.baseURL + "/v1/trade/poll.json?callback=?", {account_id: accountId, max_trade_id: maxTradeId, session_token: sessionToken}, function(response, textStatus) {
-        if(callback) {
-            callback(response);
-        }
-    });
-}
-
-OANDA.trade.trailing_amount = function(sessionToken, accountId, symbols, callback) {
+OANDA.order.listSpecific = function(accountId, orderIds, callback) {
     var needComma = false;
-    var symbolStr = "";
-    for(var cur in symbols) {
+    var ordersStr = "";
+    for(var cur in orderIds) {
         if(needComma) {
-            symbolStr += ",";
+            ordersStr += ",";
         }
-        symbolStr += symbols[cur];
+        ordersStr += orderIds[cur];
         needComma = true;
     }
-    $.getJSON(OANDA.baseURL + "/v1/trade/trailing_amount.json?callback=?", {account_id: accountId, symbols: symbolStr, session_token: sessionToken}, function(response, textStatus) {
+    $.getJSON(OANDA.baseURL + "/v1/accounts/" + accountId + "/orders", {orderIds: ordersStr}, function(response, textStatus) {
         if(callback) {
             callback(response);
         }
     });
 }
+
+OANDA.order.open = function(accountId, instrument, units, price, expiry, callback) {
+    $.post(OANDA.baseURL + "/v1/accounts/" + accountId + "/orders", {instrument: instrument, units: units, price: price, expiry:expiry}, function(response, textStatus) {
+        if(callback) {
+            callback(response);
+        }
+    }, 'json');
+}
+
+OANDA.order.close = function(accountId, orderId, callback) {
+    $.ajax({
+        url: OANDA.baseURL + "/v1/accounts/" + accountId + "/orders/" + orderId,
+        type: 'DELETE',
+        success: function(response, textStatus) {
+        if(callback) {
+            callback(response);
+        }}});
+}
+
+OANDA.order.change = function(accountId, orderId, units, price, callback) {
+    $.ajax({
+        url: OANDA.baseURL + "/v1/accounts/" + accountId + "/orders/" + orderId,
+        data: {units: units, price: price},
+        type: 'PUT',
+        success:function(response, textStatus) {
+        if(callback) {
+            callback(response);
+        }}});
+}
+
 
 OANDA.position = OANDA.position || {};
 
-OANDA.position.list = function(sessionToken, accountId, callback) {
-    $.getJSON(OANDA.baseURL + "/v1/position/list.json?callback=?", {account_id: accountId, session_token: sessionToken}, function(response, textStatus) {
+OANDA.position.list = function(accountId, callback) {
+    $.getJSON(OANDA.baseURL + "/v1/accounts/" + accountId + "/positions", {}, function(response, textStatus) {
         if(callback) {
             callback(response);
         }
     });
 }
 
-OANDA.position.close = function(sessionToken, accountId, symbol, callback) {
-    $.getJSON(OANDA.baseURL + "/v1/position/close.json?callback=?", {account_id: accountId, symbol: symbol, session_token: sessionToken}, function(response, textStatus) {
+OANDA.position.listSpecific = function(accountId, instrument, callback) {
+    $.getJSON(OANDA.baseURL + "/v1/accounts/" + accountId + "/positions/" + instrument, {}, function(response, textStatus) {
         if(callback) {
             callback(response);
         }
     });
+}
+
+OANDA.position.close = function(accountId, instrument, callback) {
+    $.ajax({
+        url: OANDA.baseURL + "/v1/accounts/" + accountId + "/positions/" + instrument,
+        type: 'DELETE',
+        success: function(response, textStatus) {
+                    if(callback) {
+                        callback(response);
+                    }
+                 }
+            });
 }
 
 OANDA.account = OANDA.account || {};
@@ -165,62 +182,13 @@ OANDA.account.list = function(username, callback) {
     });
 }
 
-OANDA.account.status = function(sessionToken, accountId, callback) {
-    $.getJSON(OANDA.baseURL + "/v1/account/status.json?callback=?", {account_id: accountId, session_token: sessionToken}, function(response, textStatus) {
-        if(callback) {
-            callback(response);
-        }
-    });
-}
 
-/*
-OANDA.order = OANDA.order || {};
 
-OANDA.order.list = function(sessionToken, accountId, callback) {
-    $.getJSON(OANDA.baseURL + "/v1/order/list.json?callback=?", {account_id: accountId, session_token: sessionToken}, function(response, textStatus) {
-        if(callback) {
-            callback(response);
-        }
-    });
-}
-
-OANDA.order.create = function(sessionToken, accountId, symbol, units, price, expiry, callback) {
-    $.getJSON(OANDA.baseURL + "/v1/order/create.json?callback=?", {account_id: accountId, symbol: symbol, units: units, price: price, expiry: expiry, session_token: sessionToken}, function(response, textStatus) {
-        if(callback) {
-            callback(response);
-        }
-    });
-}
-
-OANDA.order.change = function(sessionToken, accountId, callback) {
-    $.getJSON(OANDA.baseURL + "/v1/order/change.json?callback=?", {account_id: accountId, session_token: sessionToken}, function(response, textStatus) {
-        if(callback) {
-            callback(response);
-        }
-    });
-}
-
-OANDA.order.delete = function(sessionToken, accountId, callback) {
-    $.getJSON(OANDA.baseURL + "/v1/order/delete.json?callback=?", {account_id: accountId, session_token: sessionToken}, function(response, textStatus) {
-        if(callback) {
-            callback(response);
-        }
-    });
-}
-
-OANDA.order.poll = function(sessionToken, accountId, callback) {
-    $.getJSON(OANDA.baseURL + "/v1/order/poll.json?callback=?", {account_id: accountId, session_token: sessionToken}, function(response, textStatus) {
-        if(callback) {
-            callback(response);
-        }
-    });
-}*/
 
 OANDA.rate = OANDA.rate || {};
 
 OANDA.rate.list_symbols = function(sessionToken, callback) {
     $.getJSON(OANDA.baseURL + "/v1/instruments", function(response, textStatus) {
-  //  return response;
        if(callback) {
             callback(response);
         }

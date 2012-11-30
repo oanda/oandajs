@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+
+    <body>
+	<br>
+	<table id='result' style="text-align: center;" class="h2">
+	    <tr>
+	        <td>TESTNAME </td>
+	        <td>STATUS</td>
+	    </tr>
+	</table>
+
+	</body>
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script type="text/javascript" src="./oanda.js"></script>
+<script type="text/javascript">
+
+
+    var result = $("#result");
+
+//    getUser();
+//    function getUser() {
+//        OANDA.user.register_zero('USD', function(userResponse) {
+//        	var username = userResponse.username;
+//        	var password = userResponse.password;
+//            getAccountId(username);
+//        });
+//    }
+
+    getAccountId('laudouis');
+    function getAccountId(username) {
+        result.append("<tr><td>getAccountId</td><td id='getAccountId'>fail</td></tr>");
+        OANDA.account.list(username, function(response) {
+            var accountId = response[0].id;
+            openTrade(accountId);
+            $("#getAccountId").text('pass');
+        });
+    }
+
+    function openTrade(accountId) {
+        result.append("<tr><td>openTrade</td><td id='openTrade'>fail</td></tr>");
+        OANDA.trade.open(accountId, 'EUR_USD', 100, function(openTradeResponse) {
+            var units = openTradeResponse.units;
+            var direction = openTradeResponse.direction;
+            var instrument = openTradeResponse.instrument;
+            var time = openTradeResponse.time;
+            listTrade(accountId);
+            $("#openTrade").text('pass');
+        });
+    }
+
+    function listTrade(accountId) {
+        result.append("<tr><td>listTrade</td><td id='listTrade'>fail</td></tr>");
+        OANDA.trade.list(accountId, function(response) {
+            var ids = new Array();
+            ids[0] = response.trades[0].id;
+            listTradeSpecific(accountId, ids);
+            $("#listTrade").text('pass');
+        });
+    }
+
+    function listTradeSpecific(accountId, ids) {
+        result.append("<tr><td>listTradeSpecific</td><td id='listTradeSpecific'>fail</td></tr>");
+        OANDA.trade.listSpecific(accountId, ids, function(response) {
+            var id = response.trades[0].id;
+            changeTrade(accountId, id);
+            $("#listTradeSpecific").text('pass');
+        });
+    }
+
+    function changeTrade(accountId, id) {
+        result.append("<tr><td>changeTrade</td><td id='changeTrade'>fail</td></tr>");
+        OANDA.trade.change(accountId, id, '0.1', '99', '30', function(response) {
+            var changeTradeTransId = response.id;
+            deleteTrade(accountId, id);
+            $("#changeTrade").text('pass');
+        });
+    }
+
+    function deleteTrade(accountId, id) {
+        result.append("<tr><td>deleteTrade</td><td id='deleteTrade'>fail</td></tr>");
+        OANDA.trade.close(accountId, id, function(response) {
+            var tradeId = response.id;
+            openOrder(accountId);
+            $("#deleteTrade").text('pass');
+        });
+    }
+
+    function openOrder(accountId) {
+        result.append("<tr><td>openOrder</td><td id='openOrder'>fail</td></tr>");
+        var expiry = Math.round((new Date()).getTime() / 1000) + 10000;
+        OANDA.order.open(accountId, 'EUR_USD', 100, '5.67', expiry, function(openOrderResponse) {
+            var units = openOrderResponse.units;
+            var direction = openOrderResponse.direction;
+            var instrument = openOrderResponse.instrument;
+            var time = openOrderResponse.time;
+            listOrder(accountId);
+            $("#openOrder").text('pass');
+        });
+    }
+
+    function listOrder(accountId) {
+        result.append("<tr><td>listOrder</td><td id='listOrder'>fail</td></tr>");
+        OANDA.order.list(accountId, function(response) {
+            var ids = new Array();
+            ids[0] = response.orders[0].id;
+            listOrderSpecific(accountId, ids);
+            $("#listOrder").text('pass');
+        });
+    }
+
+    function listOrderSpecific(accountId, ids) {
+        result.append("<tr><td>listOrderSpecific</td><td id='listOrderSpecific'>fail</td></tr>");
+        OANDA.order.listSpecific(accountId, ids, function(response) {
+            var id = response.orders[0].id;
+            changeOrder(accountId, id);
+            $("#listOrderSpecific").text('pass');
+        });
+    }
+
+    function changeOrder(accountId, id) {
+        result.append("<tr><td>changeOrder</td><td id='changeOrder'>fail</td></tr>");
+        OANDA.order.change(accountId, id, 101, '6.77', function(response) {
+            var changeOrderTransId = response.id;
+            deleteOrder(accountId, id);
+            $("#changeOrder").text('pass');
+        });
+    }
+
+    function deleteOrder(accountId, id) {
+        result.append("<tr><td>deleteOrder</td><td id='deleteOrder'>fail</td></tr>");
+        OANDA.order.close(accountId, id, function(response) {
+            var orderId = response.id;
+            var ocaGroupId = response.id;
+            $("#deleteOrder").text('pass');
+        });
+    }
+
+    function transactionList(accountId) {
+        result.append("<tr><td>transactionList</td><td id='transactionList'>fail</td></tr>");
+        OANDA.transaction.list(accountId, function(response) {
+            var id = response.transactions[0].id;
+            transactionListSpecific(accountId, id);
+            $("#transactionList").text('pass');
+        });
+    }
+
+    function transactionListSpecific(accountId, id) {
+        result.append("<tr><td>transactionListSpecific</td><td id='transactionListSpecific'>fail</td></tr>");
+        OANDA.transaction.listSpecific(accountId, id, function(response) {
+            var id = response.id;
+            $("#transactionListSpecific").text('pass');
+        });
+    }
+
+</script>
+
+</html>
+
+
