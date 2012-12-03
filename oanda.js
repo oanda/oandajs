@@ -187,7 +187,7 @@ OANDA.account.list = function(username, callback) {
 
 OANDA.rate = OANDA.rate || {};
 
-OANDA.rate.list_symbols = function(sessionToken, callback) {
+OANDA.rate.list_symbols = function(callback) {
     $.getJSON(OANDA.baseURL + "/v1/instruments", function(response, textStatus) {
        if(callback) {
             callback(response);
@@ -203,7 +203,7 @@ OANDA.rate.history = function(sessionToken, symbol, granularity, points, callbac
     });
 }
 
-OANDA.rate.quote = function(sessionToken, symbols, callback) {
+OANDA.rate.quote = function(symbols, callback) {
     var needComma = false;
     var symbolStr = "";
     for(var cur in symbols) {

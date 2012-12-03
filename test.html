@@ -123,8 +123,8 @@
         result.append("<tr><td>changeOrder</td><td id='changeOrder'>fail</td></tr>");
         OANDA.order.change(accountId, id, 101, '6.77', function(response) {
             var changeOrderTransId = response.id;
-            deleteOrder(accountId, id);
             $("#changeOrder").text('pass');
+            deleteOrder(accountId, id);
         });
     }
 
@@ -134,6 +134,7 @@
             var orderId = response.id;
             var ocaGroupId = response.id;
             $("#deleteOrder").text('pass');
+            transactionList(accountId);
         });
     }
 
@@ -141,8 +142,8 @@
         result.append("<tr><td>transactionList</td><td id='transactionList'>fail</td></tr>");
         OANDA.transaction.list(accountId, function(response) {
             var id = response.transactions[0].id;
-            transactionListSpecific(accountId, id);
             $("#transactionList").text('pass');
+            transactionListSpecific(accountId, id);
         });
     }
 
@@ -151,6 +152,17 @@
         OANDA.transaction.listSpecific(accountId, id, function(response) {
             var id = response.id;
             $("#transactionListSpecific").text('pass');
+            getRates();
+        });
+    }
+
+    function getRates()
+    {
+        result.append("<tr><td>getRates</td><td id='getRates'>fail</td></tr>");
+        OANDA.rate.quote(['EUR_USD'], function(response) {
+            var bid = response.prices[0].bid;
+            var ask = response.prices[0].ask;
+            $("#getRates").text('pass');
         });
     }
 
