@@ -163,6 +163,19 @@
             var bid = response.prices[0].bid;
             var ask = response.prices[0].ask;
             $("#getRates").text('pass');
+            getHistory();
+        });
+    }
+
+    function getHistory()
+    {
+        result.append("<tr><td>getHistory</td><td id='getHistory'>fail</td></tr>");
+        OANDA.rate.history("EUR_USD", "S5", "2", function(response) {
+            var openMid = response.candles[0].openMid;
+            var highMid = response.candles[0].highMid;
+            var lowMid = response.candles[0].lowMid;
+            var closeMid = response.candles[0].closeMid;
+            $("#getHistory").text('pass');
         });
     }
 

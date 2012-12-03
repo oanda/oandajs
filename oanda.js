@@ -195,8 +195,8 @@ OANDA.rate.list_symbols = function(callback) {
     });
 }
 
-OANDA.rate.history = function(sessionToken, symbol, granularity, points, callback) {
-    $.getJSON(OANDA.baseURL + "/v1/rate/history.json?callback=?", {symbol:symbol, granularity: granularity, points: points, session_token: sessionToken}, function(response, textStatus) {
+OANDA.rate.history = function(symbol, granularity, count, callback) {
+    $.getJSON(OANDA.baseURL + "/v1/instruments/" + symbol + "/candles", {granularity: granularity, count: count}, function(response, textStatus) {
         if(callback) {
             callback(response);
         }
