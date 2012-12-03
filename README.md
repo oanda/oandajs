@@ -10,7 +10,16 @@ Include the latest oanda.js in as a script tag:
 
     <script type="text/javascript" src="https://raw.github.com/oanda/oandajs/master/oanda.js"></script>
     
-To make a library call:
+To get current live rates:
+
+    OANDA.rate.quote(['EUR_USD'], function(response) {
+        var bid = response.prices[0].bid;
+        var ask = response.prices[0].ask;
+        // Do something with prices
+        // ...
+    });
+    
+To open a trade:    
 
     OANDA.trade.open(accountId, 'EUR_USD', 100, function(openTradeResponse) {
         var units = openTradeResponse.units;
