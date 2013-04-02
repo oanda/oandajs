@@ -1,16 +1,6 @@
 var OANDA = OANDA || {};
 OANDA.baseURL = OANDA.baseURL || "http://api-sandbox.oanda.com";
 
-OANDA.user = OANDA.user || {};
-
-OANDA.user.register_zero = function(currency, callback) {
-    $.post(OANDA.baseURL + "/v1/users", {currency: currency}, function(response, textStatus) {
-        if(callback) {
-            callback(response);
-        }
-    }, 'json');
-}
-
 OANDA.transaction = OANDA.transaction || {};
 
 OANDA.transaction.list = function(accountId, callback) {
@@ -174,16 +164,13 @@ OANDA.position.close = function(accountId, instrument, callback) {
 
 OANDA.account = OANDA.account || {};
 
-OANDA.account.list = function(username, callback) {
-    $.getJSON(OANDA.baseURL + "/v1/accounts", {username: username}, function(response, textStatus) {
+OANDA.account.register = function(callback) {
+    $.post(OANDA.baseURL + "/v1/accounts", {}, function(response, textStatus) {
         if(callback) {
             callback(response);
         }
-    });
+    }, 'json');
 }
-
-
-
 
 OANDA.rate = OANDA.rate || {};
 
