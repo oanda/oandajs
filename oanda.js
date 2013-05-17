@@ -46,8 +46,8 @@ OANDA.trade.listSpecific = function(accountId, tradeIds, callback) {
     });
 }
 
-OANDA.trade.open = function(accountId, instrument, units, callback) {
-    $.post(OANDA.baseURL + "/v1/accounts/" + accountId + "/trades", {instrument: instrument, units: units}, function(response, textStatus) {
+OANDA.trade.open = function(accountId, instrument, units, side, callback) {
+    $.post(OANDA.baseURL + "/v1/accounts/" + accountId + "/trades", {instrument: instrument, units: units, side : side}, function(response, textStatus) {
         if(callback) {
             callback(response);
         }
@@ -102,8 +102,8 @@ OANDA.order.listSpecific = function(accountId, orderIds, callback) {
     });
 }
 
-OANDA.order.open = function(accountId, instrument, units, price, expiry, callback) {
-    $.post(OANDA.baseURL + "/v1/accounts/" + accountId + "/orders", {instrument: instrument, units: units, price: price, expiry:expiry}, function(response, textStatus) {
+OANDA.order.open = function(accountId, instrument, units, side, price, expiry, callback) {
+    $.post(OANDA.baseURL + "/v1/accounts/" + accountId + "/orders", {instrument: instrument, units: units, side:side, price: price, expiry:expiry}, function(response, textStatus) {
         if(callback) {
             callback(response);
         }

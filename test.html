@@ -28,21 +28,13 @@
 //        });
 //    }
 
-    getAccountId('laudouis');
-    function getAccountId(username) {
-        result.append("<tr><td>getAccountId</td><td id='getAccountId'>fail</td></tr>");
-        OANDA.account.list(username, function(response) {
-            var accountId = response[0].id;
-            openTrade(accountId);
-            $("#getAccountId").text('pass');
-        });
-    }
 
+	openTrade(3063239)
     function openTrade(accountId) {
         result.append("<tr><td>openTrade</td><td id='openTrade'>fail</td></tr>");
-        OANDA.trade.open(accountId, 'EUR_USD', 100, function(openTradeResponse) {
+        OANDA.trade.open(accountId, 'EUR_USD', 100, 'sell',  function(openTradeResponse) {
             var units = openTradeResponse.units;
-            var direction = openTradeResponse.direction;
+            var side = openTradeResponse.side;
             var instrument = openTradeResponse.instrument;
             var time = openTradeResponse.time;
             listTrade(accountId);
@@ -89,10 +81,11 @@
 
     function openOrder(accountId) {
         result.append("<tr><td>openOrder</td><td id='openOrder'>fail</td></tr>");
-        var expiry = Math.round((new Date()).getTime() / 1000) + 10000;
-        OANDA.order.open(accountId, 'EUR_USD', 100, '5.67', expiry, function(openOrderResponse) {
+	var expDate = new Date();
+	expDate.setTime(expDate.getTime() + 10*60*60*1000); //Add 10 hours.
+        OANDA.order.open(accountId, 'EUR_USD', 100, 'buy','5.67', expDate.toISOString(), function(openOrderResponse) {
             var units = openOrderResponse.units;
-            var direction = openOrderResponse.direction;
+            var side = openOrderResponse.side;
             var instrument = openOrderResponse.instrument;
             var time = openOrderResponse.time;
             listOrder(accountId);
@@ -180,7 +173,6 @@
     }
 
 </script>
-
 </html>
 
 
