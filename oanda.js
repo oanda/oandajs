@@ -195,7 +195,7 @@ OANDA.rate.quote = function(symbols, callback) {
     var symbolStr = "";
     for(var cur in symbols) {
         if(needComma) {
-            symbolStr += ",";
+            symbolStr += "%2C";
         }
         symbolStr += symbols[cur];
         needComma = true;
