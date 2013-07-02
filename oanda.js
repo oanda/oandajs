@@ -183,7 +183,7 @@ OANDA.rate.list_symbols = function(callback) {
 }
 
 OANDA.rate.history = function(symbol, granularity, count, callback) {
-    $.getJSON(OANDA.baseURL + "/v1/history?instruments=" + symbol, {granularity: granularity, count: count}, function(response, textStatus) {
+    $.getJSON(OANDA.baseURL + "/v1/history?instrument=" + symbol, {granularity: granularity, count: count}, function(response, textStatus) {
         if(callback) {
             callback(response);
         }
@@ -200,7 +200,7 @@ OANDA.rate.quote = function(symbols, callback) {
         symbolStr += symbols[cur];
         needComma = true;
     }
-    $.getJSON(OANDA.baseURL + "/v1/quote.json", {instruments: symbolStr}, function(response, textStatus) {
+    $.getJSON(OANDA.baseURL + "/v1/quote", {instruments: symbolStr}, function(response, textStatus) {
         if(callback) {
             callback(response);
         }
