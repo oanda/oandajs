@@ -165,7 +165,8 @@ OANDA.position.close = function(accountId, instrument, callback) {
 OANDA.account = OANDA.account || {};
 
 OANDA.account.register = function(callback) {
-    $.post(OANDA.baseURL + "/v1/acccounts", {}, function(response, textStatus) {
+    $.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+    $.post(OANDA.baseURL + "/v1/accounts", {}, function(response, textStatus) {
         if(callback) {
             callback(response);
         }
