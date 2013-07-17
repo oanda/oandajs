@@ -169,6 +169,7 @@ OANDA.account.register = function(callback) {
     $.ajax({
         url: OANDA.baseURL + "/v1/accounts", 
         type: 'POST',
+        contentType: "application/x-www-form-urlencoded"
         success: function(response, textStatus) {
                     if (callback) {
                         callback(response);
