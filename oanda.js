@@ -189,7 +189,7 @@ OANDA.rate.list_symbols = function(callback) {
 }
 
 OANDA.rate.history = function(symbol, granularity, count, callback) {
-    $.getJSON(OANDA.baseURL + "/v1/instruments/" + symbol + "/candles", {granularity: granularity, count: count}, function(response, textStatus) {
+    $.getJSON(OANDA.baseURL + "/v1/history?instrument=" + symbol, {granularity: granularity, count: count}, function(response, textStatus) {
         if(callback) {
             callback(response);
         }
@@ -201,12 +201,12 @@ OANDA.rate.quote = function(symbols, callback) {
     var symbolStr = "";
     for(var cur in symbols) {
         if(needComma) {
-            symbolStr += ",";
+            symbolStr += "%2C";
         }
         symbolStr += symbols[cur];
         needComma = true;
     }
-    $.getJSON(OANDA.baseURL + "/v1/instruments/price.json", {instruments: symbolStr}, function(response, textStatus) {
+    $.getJSON(OANDA.baseURL + "/v1/quote", {instruments: symbolStr}, function(response, textStatus) {
         if(callback) {
             callback(response);
         }
