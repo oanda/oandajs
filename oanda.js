@@ -165,12 +165,11 @@ OANDA.position.close = function(accountId, instrument, callback) {
 OANDA.account = OANDA.account || {};
 
 OANDA.account.register = function(callback) {
-    $.headers('Content-Type','application/x-www-form-urlencoded');
     $.post(OANDA.baseURL + "/v1/accounts", {}, function(response, textStatus) {
         if(callback) {
             callback(response);
         }
-    }, 'json');
+    }, 'json').putHeader('Content-Type', 'application/x-www-form-urlencoded');
 }
 
 OANDA.rate = OANDA.rate || {};
