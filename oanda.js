@@ -177,15 +177,15 @@ OANDA.account.register = function(callback) {
         });
 }
 
-//OANDA.rate = OANDA.rate || {};
+OANDA.rate = OANDA.rate || {};
 
-//OANDA.rate.list_symbols = function(callback) {
-//    $.getJSON(OANDA.baseURL + "/v1/instruments", function(response, textStatus) {
-//       if(callback) {
-//            callback(response);
-//        }
-//    });
-//}
+OANDA.rate.list_symbols = function(callback) {
+    $.getJSON(OANDA.baseURL + "/v1/instruments", function(response, textStatus) {
+       if(callback) {
+            callback(response);
+        }
+    });
+}
 
 OANDA.rate.history = function(symbol, granularity, count, callback) {
     $.getJSON(OANDA.baseURL + "/v1/instruments/" + symbol + "/candles", {granularity: granularity, count: count}, function(response, textStatus) {
