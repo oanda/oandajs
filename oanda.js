@@ -166,22 +166,26 @@ OANDA.account = OANDA.account || {};
 
 OANDA.account.register = function(callback) {
     // header('Content-Type: application/x-www-form-urlencoded')
-    $.post(OANDA.baseURL + "/v1/accounts", {}, function(response, textStatus) {
-        if(callback) {
-            callback(response);
-        }
-    }, 'json');
+    $.ajax({
+        url: OANDA.baseURL + "/v1/accounts", 
+        type: 'POST',
+        success: function(response, textStatus) {
+                    if (callback) {
+                        callback(response);
+                    }
+                 }
+        });
 }
 
-OANDA.rate = OANDA.rate || {};
+//OANDA.rate = OANDA.rate || {};
 
-OANDA.rate.list_symbols = function(callback) {
-    $.getJSON(OANDA.baseURL + "/v1/instruments", function(response, textStatus) {
-       if(callback) {
-            callback(response);
-        }
-    });
-}
+//OANDA.rate.list_symbols = function(callback) {
+//    $.getJSON(OANDA.baseURL + "/v1/instruments", function(response, textStatus) {
+//       if(callback) {
+//            callback(response);
+//        }
+//    });
+//}
 
 OANDA.rate.history = function(symbol, granularity, count, callback) {
     $.getJSON(OANDA.baseURL + "/v1/instruments/" + symbol + "/candles", {granularity: granularity, count: count}, function(response, textStatus) {
