@@ -19,17 +19,16 @@
 
     var result = $("#result");
 
-//    getUser();
-//    function getUser() {
-//        OANDA.user.register_zero('USD', function(userResponse) {
-//        	var username = userResponse.username;
-//        	var password = userResponse.password;
-//            getAccountId(username);
-//        });
-//    }
+    OANDA.auth.enabled = false;
+    //Create a fresh account
+    function createAccount() {
+        OANDA.account.register('USD', function(createAcctResponse) {
+            var accountId = createAcctResponse.accountId;
+            openTrade(accountId);
+        });
+    }
 
-
-	openTrade(3063239)
+    createAccount();
     function openTrade(accountId) {
         result.append("<tr><td>openTrade</td><td id='openTrade'>fail</td></tr>");
         OANDA.trade.open(accountId, 'EUR_USD', 100, 'sell',  function(openTradeResponse) {
@@ -63,7 +62,7 @@
 
     function changeTrade(accountId, id) {
         result.append("<tr><td>changeTrade</td><td id='changeTrade'>fail</td></tr>");
-        OANDA.trade.change(accountId, id, '0.1', '99', '30', function(response) {
+        OANDA.trade.change(accountId, id, '99', '0.1', '50', function(response) {
             var changeTradeTransId = response.id;
             deleteTrade(accountId, id);
             $("#changeTrade").text('pass');
@@ -74,16 +73,16 @@
         result.append("<tr><td>deleteTrade</td><td id='deleteTrade'>fail</td></tr>");
         OANDA.trade.close(accountId, id, function(response) {
             var tradeId = response.id;
-            openOrder(accountId);
             $("#deleteTrade").text('pass');
+            openOrder(accountId);
         });
     }
 
     function openOrder(accountId) {
         result.append("<tr><td>openOrder</td><td id='openOrder'>fail</td></tr>");
-	var expDate = new Date();
-	expDate.setTime(expDate.getTime() + 10*60*60*1000); //Add 10 hours.
-        OANDA.order.open(accountId, 'EUR_USD', 100, 'buy','5.67', expDate.toISOString(), function(openOrderResponse) {
+        var expDate = new Date();
+        expDate.setTime(expDate.getTime() + 10*60*60*1000); //Add 10 hours.
+        OANDA.order.open(accountId, 'EUR_USD', 100, 'buy','5.67', expDate.toISOString(), 'marketIfTouched', function(openOrderResponse) {
             var units = openOrderResponse.units;
             var side = openOrderResponse.side;
             var instrument = openOrderResponse.instrument;

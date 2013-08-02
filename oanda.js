@@ -1,10 +1,41 @@
 var OANDA = OANDA || {};
 OANDA.baseURL = OANDA.baseURL || "http://api-sandbox.oanda.com";
 
+OANDA.auth = OANDA.auth || {};
+OANDA.auth.enabled = OANDA.auth.enabled || false;
+OANDA.auth.token = OANDA.auth.token || "";
+
+var setAuthHeader = function(xhr) {
+    xhr.setRequestHeader("Authorization", "Bearer " + OANDA.auth.token)
+}
+
+var sendAjaxRequest = function(endpoint, method, parameters, requiresAuth, onSuccess) {
+    var contentType = "";
+    if(method === 'POST' || method === 'PUT') {
+        contentType = "application/x-www-form-urlencoded";
+    }
+    var beforeSend = function() {}
+    if(OANDA.auth.enabled && requiresAuth) {
+        beforeSend = setAuthHeader;
+    }
+    $.ajax({
+        url: OANDA.baseURL + endpoint, 
+        type: method,
+        dataType: 'json',
+        data : parameters,
+        contentType: contentType,
+        success : onSuccess,
+        beforeSend: beforeSend,
+    });
+}
+
 OANDA.transaction = OANDA.transaction || {};
 
+/* 
+ * Lists all transactions for a specified account.
+ */
 OANDA.transaction.list = function(accountId, callback) {
-    $.getJSON(OANDA.baseURL + "/v1/accounts/" + accountId + "/transactions", {}, function(response, textStatus) {
+    sendAjaxRequest("/v1/accounts/" + accountId + "/transactions", 'GET', {}, true, function(response, textStatus) {
         if(callback) {
             callback(response);
         }
@@ -12,7 +43,7 @@ OANDA.transaction.list = function(accountId, callback) {
 }
 
 OANDA.transaction.listSpecific = function(accountId, transId, callback) {
-    $.getJSON(OANDA.baseURL + "/v1/accounts/" + accountId + "/transactions/" + transId, {}, function(response, textStatus) {
+    sendAjaxRequest("/v1/accounts/" + accountId + "/transactions/" + transId, 'GET', {}, true, function(response, textStatus) {
         if(callback) {
             callback(response);
         }
@@ -22,7 +53,7 @@ OANDA.transaction.listSpecific = function(accountId, transId, callback) {
 OANDA.trade = OANDA.trade || {};
 
 OANDA.trade.list = function(accountId, callback) {
-    $.getJSON(OANDA.baseURL + "/v1/accounts/" + accountId + "/trades", {}, function(response, textStatus) {
+    sendAjaxRequest("/v1/accounts/" + accountId + "/trades", 'GET', {}, true, function(response, textStatus) {
         if(callback) {
             callback(response);
         }
@@ -39,7 +70,7 @@ OANDA.trade.listSpecific = function(accountId, tradeIds, callback) {
         tradesStr += tradeIds[cur];
         needComma = true;
     }
-    $.getJSON(OANDA.baseURL + "/v1/accounts/" + accountId + "/trades", {tradeIds: tradesStr}, function(response, textStatus) {
+    sendAjaxRequest("/v1/accounts/" + accountId + "/trades", 'GET', {ids : tradesStr}, true, function(response, textStatus) {
         if(callback) {
             callback(response);
         }
@@ -47,38 +78,36 @@ OANDA.trade.listSpecific = function(accountId, tradeIds, callback) {
 }
 
 OANDA.trade.open = function(accountId, instrument, units, side, callback) {
-    $.post(OANDA.baseURL + "/v1/accounts/" + accountId + "/trades", {instrument: instrument, units: units, side : side}, function(response, textStatus) {
+    sendAjaxRequest("/v1/accounts/" + accountId + "/trades", 'POST', {instrument:instrument, units:units, side:side}, true, function(response, textStatus) {
         if(callback) {
             callback(response);
         }
-    }, 'json');
+    });
 }
 
 OANDA.trade.close = function(accountId, tradeId, callback) {
-    $.ajax({
-        url: OANDA.baseURL + "/v1/accounts/" + accountId + "/trades/" + tradeId,
-        type: 'DELETE',
-        success: function(response, textStatus) {
+    sendAjaxRequest("/v1/accounts/" + accountId + "/trades/" + tradeId, 'DELETE', {}, true, function(response, textStatus) {
         if(callback) {
             callback(response);
-        }}});
+        }
+    });
 }
 
 OANDA.trade.change = function(accountId, tradeId, stopLoss, takeProfit, trailingStop, callback) {
-    $.ajax({
-        url: OANDA.baseURL + "/v1/accounts/" + accountId + "/trades/" + tradeId,
-        data: {stop_loss: stopLoss, take_profit: takeProfit, trailing_stop: trailingStop},
-        type: 'PUT',
-        success:function(response, textStatus) {
-        if(callback) {
-            callback(response);
-        }}});
+    sendAjaxRequest("/v1/accounts/" + accountId + "/trades/" + tradeId, 'PUT', 
+            { stopLoss : stopLoss, takeProfit : takeProfit, trailingStop : trailingStop },
+            true,
+            function(response, textStatus) {
+                if(callback) {
+                    callback(response);
+                }
+        });
 }
 
 OANDA.order = OANDA.order || {};
 
 OANDA.order.list = function(accountId, callback) {
-    $.getJSON(OANDA.baseURL + "/v1/accounts/" + accountId + "/orders", {}, function(response, textStatus) {
+    sendAjaxRequest("/v1/accounts/" + accountId + "/orders", 'GET', {}, true, function(response, textStatus) {
         if(callback) {
             callback(response);
         }
@@ -95,47 +124,44 @@ OANDA.order.listSpecific = function(accountId, orderIds, callback) {
         ordersStr += orderIds[cur];
         needComma = true;
     }
-    $.getJSON(OANDA.baseURL + "/v1/accounts/" + accountId + "/orders", {orderIds: ordersStr}, function(response, textStatus) {
+    sendAjaxRequest("/v1/accounts/" + accountId + "/orders", 'GET', {ids: ordersStr}, true, function(response, textStatus) {
         if(callback) {
             callback(response);
         }
     });
 }
 
-OANDA.order.open = function(accountId, instrument, units, side, price, expiry, callback) {
-    $.post(OANDA.baseURL + "/v1/accounts/" + accountId + "/orders", {instrument: instrument, units: units, side:side, price: price, expiry:expiry}, function(response, textStatus) {
-        if(callback) {
-            callback(response);
-        }
-    }, 'json');
+OANDA.order.open = function(accountId, instrument, units, side, price, expiry, type, callback) {
+    sendAjaxRequest("/v1/accounts/" + accountId + "/orders", 'POST', {instrument: instrument, units: units, side:side, price: price, expiry:expiry, type:type}, 
+            true,
+            function(response, textStatus) {
+                if(callback) {
+                    callback(response);
+                }
+    });
 }
 
 OANDA.order.close = function(accountId, orderId, callback) {
-    $.ajax({
-        url: OANDA.baseURL + "/v1/accounts/" + accountId + "/orders/" + orderId,
-        type: 'DELETE',
-        success: function(response, textStatus) {
+    sendAjaxRequest("/v1/accounts/" + accountId + "/orders/" + orderId, 'DELETE', {}, true, function(response, textStatus) {
         if(callback) {
             callback(response);
-        }}});
+        }
+    });
 }
 
 OANDA.order.change = function(accountId, orderId, units, price, callback) {
-    $.ajax({
-        url: OANDA.baseURL + "/v1/accounts/" + accountId + "/orders/" + orderId,
-        data: {units: units, price: price},
-        type: 'PUT',
-        success:function(response, textStatus) {
+    sendAjaxRequest("/v1/accounts/" + accountId + "/orders/" + orderId, 'PUT', {units:units, price:price}, true, function(response, textStatus) {
         if(callback) {
             callback(response);
-        }}});
+        }
+    });
 }
 
 
 OANDA.position = OANDA.position || {};
 
 OANDA.position.list = function(accountId, callback) {
-    $.getJSON(OANDA.baseURL + "/v1/accounts/" + accountId + "/positions", {}, function(response, textStatus) {
+    sendAjaxRequest("/v1/accounts/" + accountId + "/positions", 'GET', {}, true, function(response, textStatus) {
         if(callback) {
             callback(response);
         }
@@ -143,7 +169,7 @@ OANDA.position.list = function(accountId, callback) {
 }
 
 OANDA.position.listSpecific = function(accountId, instrument, callback) {
-    $.getJSON(OANDA.baseURL + "/v1/accounts/" + accountId + "/positions/" + instrument, {}, function(response, textStatus) {
+    sendAjaxRequest("/v1/accounts/" + accountId + "/positions/" + instrument, 'GET' ,{}, true, function(response, textStatus) {
         if(callback) {
             callback(response);
         }
@@ -151,21 +177,16 @@ OANDA.position.listSpecific = function(accountId, instrument, callback) {
 }
 
 OANDA.position.close = function(accountId, instrument, callback) {
-    $.ajax({
-        url: OANDA.baseURL + "/v1/accounts/" + accountId + "/positions/" + instrument,
-        type: 'DELETE',
-        success: function(response, textStatus) {
-                    if(callback) {
-                        callback(response);
-                    }
-                 }
-            });
+    sendAjaxRequest("/v1/accounts/" + accountId + "/positions/" + instrument, 'DELETE', {}, true, function(response, textStatus) {
+        if(callback) {
+            callback(response);
+        }
+    });
 }
 
 OANDA.account = OANDA.account || {};
 
-OANDA.account.register = function(callback) {
-    // header('Content-Type: application/x-www-form-urlencoded')
+OANDA.account.register = function(currency, callback) {
     $.ajax({
         url: OANDA.baseURL + "/v1/accounts", 
         type: 'POST',
@@ -180,8 +201,8 @@ OANDA.account.register = function(callback) {
 
 OANDA.rate = OANDA.rate || {};
 
-OANDA.rate.list_symbols = function(callback) {
-    $.getJSON(OANDA.baseURL + "/v1/instruments", function(response, textStatus) {
+OANDA.rate.instruments = function(callback) {
+    sendAjaxRequest("/v1/instruments", 'GET', {}, true, function(response, textStatus) {
        if(callback) {
             callback(response);
         }
@@ -189,7 +210,7 @@ OANDA.rate.list_symbols = function(callback) {
 }
 
 OANDA.rate.history = function(symbol, granularity, count, callback) {
-    $.getJSON(OANDA.baseURL + "/v1/history?instrument=" + symbol, {granularity: granularity, count: count}, function(response, textStatus) {
+    sendAjaxRequest("/v1/history", 'GET', {instrument : symbol, granularity : granularity, count : count}, true, function(response, textStatus) {
         if(callback) {
             callback(response);
         }
@@ -206,7 +227,8 @@ OANDA.rate.quote = function(symbols, callback) {
         symbolStr += symbols[cur];
         needComma = true;
     }
-    $.getJSON(OANDA.baseURL + "/v1/quote", {instruments: symbolStr}, function(response, textStatus) {
+
+    sendAjaxRequest("/v1/quote", 'GET', {instruments: symbolStr}, true, function(response, textStatus) {
         if(callback) {
             callback(response);
         }
