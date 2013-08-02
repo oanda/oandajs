@@ -21,9 +21,9 @@ To get current live rates:
     
 To open a trade:    
 
-    OANDA.trade.open(accountId, 'EUR_USD', 100, function(openTradeResponse) {
+    OANDA.trade.open(accountId, 'EUR_USD', 100, 'buy', function(openTradeResponse) {
         var units = openTradeResponse.units;
-        var direction = openTradeResponse.direction;
+        var side = openTradeResponse.side;
         var instrument = openTradeResponse.instrument;
         var time = openTradeResponse.time;
         // Do something with open trade result
