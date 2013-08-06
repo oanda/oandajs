@@ -12,7 +12,7 @@
 
 	</body>
 
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <script type="text/javascript" src="./oanda.js"></script>
 <script type="text/javascript">
 
@@ -113,7 +113,7 @@
 
     function changeOrder(accountId, id) {
         result.append("<tr><td>changeOrder</td><td id='changeOrder'>fail</td></tr>");
-        OANDA.order.change(accountId, id, 101, '6.77', function(response) {
+        OANDA.order.change(accountId, id, 101, '6.77', 0, 0, 0, function(response) {
             var changeOrderTransId = response.id;
             $("#changeOrder").text('pass');
             deleteOrder(accountId, id);
@@ -144,12 +144,21 @@
         OANDA.transaction.listSpecific(accountId, id, function(response) {
             var id = response.id;
             $("#transactionListSpecific").text('pass');
+            getInstruments();
+        });
+    }
+    
+    function getInstruments()  {
+        result.append("<tr><td>getInstruments</td><td id='getInstruments'>fail</td></tr>");
+        OANDA.rate.instruments(['pip'], function(response) {
+            var pip = response.instruments[0].pip;
+            var inst = response.instruments[0].instrument;
+            $("#getInstruments").text('pass');
             getRates();
         });
     }
 
-    function getRates()
-    {
+    function getRates() {
         result.append("<tr><td>getRates</td><td id='getRates'>fail</td></tr>");
         OANDA.rate.quote(['EUR_USD'], function(response) {
             var bid = response.prices[0].bid;
@@ -163,10 +172,10 @@
     {
         result.append("<tr><td>getHistory</td><td id='getHistory'>fail</td></tr>");
         OANDA.rate.history("EUR_USD", "S5", "2", function(response) {
-            var openMid = response.candles[0].openMid;
-            var highMid = response.candles[0].highMid;
-            var lowMid = response.candles[0].lowMid;
-            var closeMid = response.candles[0].closeMid;
+            var openMid = response.candles[0].openBid;
+            var highMid = response.candles[0].openAsk;
+            var lowMid = response.candles[0].closeMid;
+            var closeMid = response.candles[0].closeAsk;
             $("#getHistory").text('pass');
         });
     }
