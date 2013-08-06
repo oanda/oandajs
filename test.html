@@ -19,6 +19,7 @@
 
     var result = $("#result");
 
+    OANDA.baseURL = "http://max:1343"
     OANDA.auth.enabled = false;
     //Create a fresh account
     function createAccount() {
@@ -62,7 +63,7 @@
 
     function changeTrade(accountId, id) {
         result.append("<tr><td>changeTrade</td><td id='changeTrade'>fail</td></tr>");
-        OANDA.trade.change(accountId, id, '99', '0.1', '50', function(response) {
+        OANDA.trade.change(accountId, id, {'stopLoss' : 99, 'takeProfit' : 0.1, 'trailingStop' : 51}, function(response) {
             var changeTradeTransId = response.id;
             deleteTrade(accountId, id);
             $("#changeTrade").text('pass');
@@ -82,7 +83,7 @@
         result.append("<tr><td>openOrder</td><td id='openOrder'>fail</td></tr>");
         var expDate = new Date();
         expDate.setTime(expDate.getTime() + 10*60*60*1000); //Add 10 hours.
-        OANDA.order.open(accountId, 'EUR_USD', 100, 'buy','5.67', expDate.toISOString(), 'marketIfTouched', function(openOrderResponse) {
+        OANDA.order.open(accountId, 'EUR_USD', 100, 'buy','5.67', expDate.toISOString(), 'marketIfTouched', {'trailingStop' : 60}, function(openOrderResponse) {
             var units = openOrderResponse.units;
             var side = openOrderResponse.side;
             var instrument = openOrderResponse.instrument;
@@ -113,7 +114,7 @@
 
     function changeOrder(accountId, id) {
         result.append("<tr><td>changeOrder</td><td id='changeOrder'>fail</td></tr>");
-        OANDA.order.change(accountId, id, 101, '6.77', 0, 0, 0, function(response) {
+        OANDA.order.change(accountId, id, {'trailingStop' : 100, 'units' : 60} ,function(response) {
             var changeOrderTransId = response.id;
             $("#changeOrder").text('pass');
             deleteOrder(accountId, id);
@@ -171,7 +172,7 @@
     function getHistory()
     {
         result.append("<tr><td>getHistory</td><td id='getHistory'>fail</td></tr>");
-        OANDA.rate.history("EUR_USD", "S5", "2", function(response) {
+        OANDA.rate.history("EUR_USD", {'granularity' : "S5", 'count' : "2"}, function(response) {
             var openMid = response.candles[0].openBid;
             var highMid = response.candles[0].openAsk;
             var lowMid = response.candles[0].closeMid;
