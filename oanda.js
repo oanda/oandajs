@@ -1,6 +1,6 @@
 var OANDA = OANDA || {};
 
-OANDA.baseURL = OANDA.baseURL || "http://api-sandbox.oanda.com";
+OANDA.baseURL = OANDA.baseURL || "http://max:1343";
 
 OANDA.auth = OANDA.auth || {};
 OANDA.auth.enabled = OANDA.auth.enabled || false;
@@ -37,7 +37,12 @@ OANDA.api = function(endpoint, method, parameters, callback) {
     sendAjaxRequest(endpoint, method, parameters, true, function(jqXHR, textResponse) {
         var response = {};
         if(textResponse != 'success') {
-            response.error= jqXHR;
+            response.error = { 'HTTPCode' : jqXHR.status };
+            try {
+                errorJSON = JSON.parse(jqXHR.responseText);
+                $.extend(response.error, errorJSON);
+            } catch(e) {
+            }
         } else {
             response = jqXHR;
         }
