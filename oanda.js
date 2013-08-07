@@ -204,8 +204,9 @@ OANDA.rate = OANDA.rate || {};
  * fields => array of strings
  */
 OANDA.rate.instruments = function(fields, callback) {
-
-    OANDA.api("/v1/instruments", 'GET', {fields: fields.join(',')}, callback);
+    fieldStr = fields.join(',');
+    data = fieldStr ? { "fields" : fieldStr } : {};
+    OANDA.api("/v1/instruments", 'GET', data, callback);
 }
 
 /* Return candlesticks for a specific instrument
