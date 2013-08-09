@@ -217,6 +217,20 @@ OANDA.account.register = function(currency, callback) {
     OANDA.api("/v1/accounts", 'POST', {currency:currency}, callback);
 }
 
+/* List all accounts associated with user
+ * Accepts no optional parameters
+ */
+OANDA.account.list = function(username, callback) {
+    OANDA.api("/v1/accounts", 'GET', {username:username}, callback);
+}
+
+/* List specific account details
+ * Accepts no optional parameters
+ */
+OANDA.account.listSpecific = function(accountId, callback) {
+    OANDA.api("/v1/accounts/" + accountId, 'GET', {}, callback);  
+}
+
 OANDA.rate = OANDA.rate || {};
 
 /* List all instruments available.
