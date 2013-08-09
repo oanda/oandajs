@@ -56,10 +56,17 @@ OANDA.transaction = OANDA.transaction || {};
 
 /* 
  * Lists all transactions for a specified account.
- * Accepts no optional parameters.
+ * Accepts optional parameters:
+ * maxId      => Number
+ * mindId     => Number
+ * count      => Number
+ * Instrument => String
+ *
  */
-OANDA.transaction.list = function(accountId, callback) {
-    OANDA.api("/v1/accounts/" + accountId + "/transactions", 'GET', {}, callback);
+OANDA.transaction.list = function(accountId, optParameters, callback) {
+    //Disallow passing ids parameter (use listSpecific instead).
+    if(optParameters.ids) { delete optParameters.ids; }
+    OANDA.api("/v1/accounts/" + accountId + "/transactions", 'GET', optParameters, callback);
 }
 
 /* List specific transactions by transaction id.
@@ -72,10 +79,14 @@ OANDA.transaction.listSpecific = function(accountId, transId, callback) {
 OANDA.trade = OANDA.trade || {};
 
 /* List all trade in account.
- * Accepts no optional parameters.
+ * Accepts optional parameters:
+ * maxId      => Number
+ * count      => Number
+ * instrument => Number
  */
-OANDA.trade.list = function(accountId, callback) {
-    OANDA.api("/v1/accounts/" + accountId + "/trades", 'GET', {}, callback);
+OANDA.trade.list = function(accountId, optParameters, callback) {
+    if(optParameters.ids) { delete optParameters.ids; }
+    OANDA.api("/v1/accounts/" + accountId + "/trades", 'GET', optParameters, callback);
 }
 
 /* List specific trades by id.
@@ -95,8 +106,8 @@ OANDA.trade.listSpecific = function(accountId, tradeIds, callback) {
  * lowerBound   => number
  * Accepts optional parameters
  */
-OANDA.trade.open = function(accountId, instrument, units, side, callback) {
-    OANDA.api("/v1/accounts/" + accountId + "/trades", 'POST', {instrument:instrument, units:units, side:side}, callback);
+OANDA.trade.open = function(accountId, instrument, units, side, optParameters, callback) {
+    OANDA.api("/v1/accounts/" + accountId + "/trades", 'POST', $.extend({instrument:instrument, units:units, side:side}, optParameters), callback);
 }
 
 /* Close an existing trade
@@ -120,10 +131,14 @@ OANDA.order = OANDA.order || {};
 
 
 /* List all orders in account.
- * Accepts no optional parameters
+ * Accepts optional parameters:
+ * maxId      => Number
+ * count      => Number
+ * Instrument => String
  */
-OANDA.order.list = function(accountId, callback) {
-    OANDA.api("/v1/accounts/" + accountId + "/orders", 'GET', {}, callback);
+OANDA.order.list = function(accountId, optParameters, callback) {
+    if(optParameters.ids) { delete optParameters.ids; }
+    OANDA.api("/v1/accounts/" + accountId + "/orders", 'GET', optParameters, callback);
 }
 
 /* List specific orders by id.
