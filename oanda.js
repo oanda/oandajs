@@ -1,6 +1,6 @@
 var OANDA = OANDA || {};
 
-OANDA.baseURL = OANDA.baseURL || "http://api-sandbox.oanda.com";
+OANDA.baseURL = OANDA.baseURL || "http://max:1343";
 
 OANDA.auth = OANDA.auth || {};
 OANDA.auth.enabled = OANDA.auth.enabled || false;
