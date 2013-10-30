@@ -218,6 +218,13 @@ OANDA.account.register = function(currency, callback) {
     OANDA.api("/v1/accounts", 'POST', {currency:currency}, callback);
 };
 
+/* Get accounts
+ * Accepts no optional parameters
+ */
+OANDA.account.get = function(callback) {
+    OANDA.api("/v1/accounts", 'GET', {}, callback);
+};
+
 /* List all accounts associated with user
  * Accepts no optional parameters
  */
@@ -238,10 +245,10 @@ OANDA.rate = OANDA.rate || {};
  * Accepts optional parameters:
  * fields => array of strings
  */
-OANDA.rate.instruments = function(fields, callback) {
+OANDA.rate.instruments = function(accountId, fields, callback) {
     var fieldStr = fields.join(',');
-    var data = fieldStr ? { "fields" : fieldStr } : {};
-    OANDA.api("/v1/instruments", 'GET', data, callback);
+    var data = fieldStr ? { "fields" : fieldStr , "accountId" : accountId} : {};
+    OANDA.api("/v1/instruments", 'GET', data, callback); 
 };
 
 /* Return candlesticks for a specific instrument
