@@ -8,7 +8,7 @@ Usage
 
 Include the latest oanda.js in as a script tag:
 
-    <script type="text/javascript" src="https://raw.github.com/oanda/oandajs/master/oanda.js"></script>
+    <script type="text/javascript" src="http://developer.oanda.com/oandajs/oanda.js"></script>
     
 To get current live rates:
 
