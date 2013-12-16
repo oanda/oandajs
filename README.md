@@ -23,7 +23,7 @@ To get current live rates:
     
 To open a trade with optional parameters:    
 
-    OANDA.trade.open(accountId, 'EUR_USD', 100, 'buy', { 'stopLoss' : 0.90, 'takeProfit' : 1.102 }, function(openTradeResponse) {
+    OANDA.order.open(accountId, 'EUR_USD', 100, 'buy', 0, 0, 'market', { 'stopLoss' : 0.90, 'takeProfit' : 1.102 }, function(openTradeResponse) {
         if(openTradeResponse && !openTradeResponse.error) {
             var units = openTradeResponse.units;
             var side = openTradeResponse.side;
@@ -37,7 +37,7 @@ To open a trade with optional parameters:
 
 To handle errors:
 
-    OANDA.trade.open(accountId, 'EUR_USD', 100, 'buy', { 'stopLoss' : 0.90, 'takeProfit' : 1.102 }, function(openTradeResponse) {
+    OANDA.order.open(accountId, 'EUR_USD', 100, 'buy', 0, 0, 'market', { 'stopLoss' : 0.90, 'takeProfit' : 1.102 }, function(openTradeResponse) {
         if(openTradeResponse.error) {
             var error = openTradeResponse.error;
             console.log(error.statusCode); //HTTP status code
