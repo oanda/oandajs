@@ -2,6 +2,7 @@ var OANDA = OANDA || {};
 
 OANDA.baseURL = OANDA.baseURL || "http://api-sandbox.oanda.com";
 
+
 OANDA.auth = OANDA.auth || {};
 OANDA.auth.enabled = OANDA.auth.enabled || false;
 OANDA.auth.token = OANDA.auth.token || "";
@@ -97,19 +98,6 @@ OANDA.trade.listSpecific = function(accountId, tradeIds, callback) {
     OANDA.api("/v1/accounts/" + accountId + "/trades", 'GET', {ids : tradesStr}, callback);
 };
 
-/* Open a new trade
- * Accepts optional parameters:
- * stopLoss     => number
- * takeProfit   => number
- * trailingStop => number
- * upperBound   => number
- * lowerBound   => number
- * Accepts optional parameters
- */
-OANDA.trade.open = function(accountId, instrument, units, side, optParameters, callback) {
-    OANDA.api("/v1/accounts/" + accountId + "/trades", 'POST', $.extend({instrument:instrument, units:units, side:side}, optParameters), callback);
-};
-
 /* Close an existing trade
  * Accepts no optional parameters.
  */
@@ -150,6 +138,7 @@ OANDA.order.listSpecific = function(accountId, orderIds, callback) {
 };
 
 /* Create a new order.
+ * Expiry and Price are only required if order type is 'marketIfTouched', 'stop' or 'limit'
  * Accepts optional parameters
  * stopLoss     => number
  * takeProfit   => number
