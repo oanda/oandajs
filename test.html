@@ -19,7 +19,7 @@
 
     var result = $("#result");
 
-    OANDA.baseURL = "http://max:1343"
+    OANDA.baseURL = "http://api-sandbox.oanda.com"
     OANDA.auth.enabled = false;
     //Create a fresh account
     function createAccount() {
@@ -32,7 +32,7 @@
     createAccount();
     function openTrade(accountId) {
         result.append("<tr><td>openTrade</td><td id='openTrade'>fail</td></tr>");
-        OANDA.trade.open(accountId, 'EUR_USD', 100, 'sell', {'trailingStop' : 100}, function(openTradeResponse) {
+        OANDA.order.open(accountId, 'EUR_USD', 100, 'sell', 0, 0, 'market', {'trailingStop' : 100}, function(openTradeResponse) {
             var units = openTradeResponse.units;
             var side = openTradeResponse.side;
             var instrument = openTradeResponse.instrument;
@@ -151,7 +151,7 @@
     
     function getInstruments()  {
         result.append("<tr><td>getInstruments</td><td id='getInstruments'>fail</td></tr>");
-        OANDA.rate.instruments(['pip'], function(response) {
+        OANDA.rate.instruments(['pip'], [''], function(response) {
             var pip = response.instruments[0].pip;
             var inst = response.instruments[0].instrument;
             $("#getInstruments").text('pass');
