@@ -146,9 +146,9 @@ OANDA.order.listSpecific = function(accountId, orderIds, callback) {
  * upperBound   => number
  * lowerBound   => number
  */
-OANDA.order.open = function(accountId, instrument, units, side, price, expiry, type, optParameters, callback) {
+OANDA.order.open = function(accountId, instrument, units, side, type, optParameters, callback) {
     OANDA.api("/v1/accounts/" + accountId + "/orders", 'POST', 
-              $.extend({instrument: instrument, units: units, side:side, price: price, expiry:expiry, type:type}, optParameters),
+              $.extend({instrument: instrument, units: units, side:side, type:type}, optParameters),
               callback);
 };
 
