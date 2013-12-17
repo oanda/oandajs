@@ -140,15 +140,17 @@ OANDA.order.listSpecific = function(accountId, orderIds, callback) {
 /* Create a new order.
  * Expiry and Price are only required if order type is 'marketIfTouched', 'stop' or 'limit'
  * Accepts optional parameters
+ * price        => number
+ * expiry       => string
  * stopLoss     => number
  * takeProfit   => number
  * trailingStop => number
  * upperBound   => number
  * lowerBound   => number
  */
-OANDA.order.open = function(accountId, instrument, units, side, price, expiry, type, optParameters, callback) {
+OANDA.order.open = function(accountId, instrument, units, side, type, optParameters, callback) {
     OANDA.api("/v1/accounts/" + accountId + "/orders", 'POST', 
-              $.extend({instrument: instrument, units: units, side:side, price: price, expiry:expiry, type:type}, optParameters),
+              $.extend({instrument: instrument, units: units, side:side, type:type}, optParameters),
               callback);
 };
 
