@@ -138,8 +138,10 @@ OANDA.order.listSpecific = function(accountId, orderIds, callback) {
 };
 
 /* Create a new order.
- * Expiry and Price are only required if order type is 'marketIfTouched', 'stop' or 'limit'
+ * expiry and price are only required if order type is 'marketIfTouched', 'stop' or 'limit'
  * Accepts optional parameters
+ * expiry       => string RFC 3339 format
+ * price        => number
  * stopLoss     => number
  * takeProfit   => number
  * trailingStop => number
