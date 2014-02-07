@@ -13,7 +13,7 @@ var setAuthHeader = function(xhr) {
 
 var sendAjaxRequest = function(endpoint, method, parameters, requiresAuth, onComplete) {
     var contentType = "";
-    if(method === 'POST' || method === 'PUT') {
+    if(method === 'POST' || method === 'PUT' || method === 'PATCH') {
         contentType = "application/x-www-form-urlencoded";
     }
     var beforeSend = function() {};
@@ -112,7 +112,7 @@ OANDA.trade.close = function(accountId, tradeId, callback) {
  *  trailingStop => number
  */
 OANDA.trade.change = function(accountId, tradeId, optParameters, callback) {
-    OANDA.api("/v1/accounts/" + accountId + "/trades/" + tradeId, 'PUT', optParameters, callback);
+    OANDA.api("/v1/accounts/" + accountId + "/trades/" + tradeId, 'PATCH', optParameters, callback);
 };
 
 OANDA.order = OANDA.order || {};
@@ -173,7 +173,7 @@ OANDA.order.close = function(accountId, orderId, callback) {
  * trailingStop => number
  */
 OANDA.order.change = function(accountId, orderId, optParameters, callback) {
-    OANDA.api("/v1/accounts/" + accountId + "/orders/" + orderId, 'PUT', optParameters, callback);
+    OANDA.api("/v1/accounts/" + accountId + "/orders/" + orderId, 'PATCH', optParameters, callback);
 };
 
 OANDA.position = OANDA.position || {};
