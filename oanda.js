@@ -258,5 +258,5 @@ OANDA.rate.history = function(symbol, optParameters, callback) {
  * Accepts no optional parameters
  */
 OANDA.rate.quote = function(symbols, callback) {
-    OANDA.api("/v1/price", 'GET', {instruments: symbols.join(',')}, callback);
+    OANDA.api("/v1/prices", 'GET', {instruments: symbols.join(',')}, callback);
 };
