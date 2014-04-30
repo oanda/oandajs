@@ -251,12 +251,12 @@ OANDA.rate.instruments = function(accountId, fields, callback) {
  * includeFirst => boolean
  */
 OANDA.rate.history = function(symbol, optParameters, callback) {
-    OANDA.api("/v1/history", 'GET', $.extend({instrument:symbol}, optParameters), callback);
+    OANDA.api("/v1/candles", 'GET', $.extend({instrument:symbol}, optParameters), callback);
 };
 
 /* Lists the current price for a list of instruments
  * Accepts no optional parameters
  */
 OANDA.rate.quote = function(symbols, callback) {
-    OANDA.api("/v1/quote", 'GET', {instruments: symbols.join(',')}, callback);
+    OANDA.api("/v1/price", 'GET', {instruments: symbols.join(',')}, callback);
 };
