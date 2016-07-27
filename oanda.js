@@ -1,6 +1,6 @@
 var OANDA = OANDA || {};
 
-OANDA.baseURL = OANDA.baseURL || "http://api-sandbox.oanda.com";
+OANDA.baseURL = OANDA.baseURL || "https://api-fxpractice.oanda.com";
 
 
 OANDA.auth = OANDA.auth || {};
@@ -21,7 +21,7 @@ var sendAjaxRequest = function(endpoint, method, parameters, requiresAuth, onCom
         beforeSend = setAuthHeader;
     }
     var req = $.ajax({
-        url: OANDA.baseURL + endpoint, 
+        url: OANDA.baseURL + endpoint,
         type: method,
         dataType: 'json',
         data : parameters,
@@ -55,7 +55,7 @@ OANDA.api = function(endpoint, method, parameters, callback) {
 
 OANDA.transaction = OANDA.transaction || {};
 
-/* 
+/*
  * Lists all transactions for a specified account.
  * Accepts optional parameters:
  * maxId      => Number
@@ -149,7 +149,7 @@ OANDA.order.listSpecific = function(accountId, orderIds, callback) {
  * lowerBound   => number
  */
 OANDA.order.open = function(accountId, instrument, units, side, type, optParameters, callback) {
-    OANDA.api("/v1/accounts/" + accountId + "/orders", 'POST', 
+    OANDA.api("/v1/accounts/" + accountId + "/orders", 'POST',
               $.extend({instrument: instrument, units: units, side:side, type:type}, optParameters),
               callback);
 };
@@ -218,15 +218,15 @@ OANDA.account.get = function(callback) {
 /* List all accounts associated with user
  * Accepts no optional parameters
  */
-OANDA.account.list = function(username, callback) {
-    OANDA.api("/v1/accounts", 'GET', {username:username}, callback);
+OANDA.account.list = function(callback) {
+    OANDA.api("/v1/accounts", 'GET', {}, callback);
 }
 
 /* List specific account details
  * Accepts no optional parameters
  */
 OANDA.account.listSpecific = function(accountId, callback) {
-    OANDA.api("/v1/accounts/" + accountId, 'GET', {}, callback);  
+    OANDA.api("/v1/accounts/" + accountId, 'GET', {}, callback);
 }
 
 OANDA.rate = OANDA.rate || {};
@@ -238,7 +238,7 @@ OANDA.rate = OANDA.rate || {};
 OANDA.rate.instruments = function(accountId, fields, callback) {
     var fieldStr = fields.join(',');
     var data = fieldStr ? { "fields" : fieldStr , "accountId" : accountId} : {};
-    OANDA.api("/v1/instruments", 'GET', data, callback); 
+    OANDA.api("/v1/instruments", 'GET', data, callback);
 };
 
 /* Return candlesticks for a specific instrument
