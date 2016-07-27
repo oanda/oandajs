@@ -19,17 +19,22 @@
 
     var result = $("#result");
 
-    OANDA.baseURL = "http://api-sandbox.oanda.com"
-    OANDA.auth.enabled = false;
-    //Create a fresh account
-    function createAccount() {
-        OANDA.account.register('USD', function(createAcctResponse) {
-            var accountId = createAcctResponse.accountId;
+    OANDA.baseURL = "https://api-fxpractice.oanda.com"
+    OANDA.auth.enabled = true;
+
+    OANDA.auth.token = "<<TOKEN>>";
+
+    function getAccount() {
+        result.append("<tr><td>listAccounts</td><td id='listAccounts'>fail</td></tr>");
+        OANDA.account.list(function(response) {
+            var accountId = response.accounts[0].accountId;
             openMarketOrder(accountId);
+            $("#listAccounts").text('pass');
         });
     }
 
-    createAccount();
+    getAccount();
+
     function openMarketOrder(accountId) {
         result.append("<tr><td>openMarketOrder</td><td id='openMarketOrder'>fail</td></tr>");
         OANDA.order.open(accountId, 'EUR_USD', 100, 'sell', 'market', {'trailingStop' : 100}, function(openMarketOrderResponse) {
@@ -145,13 +150,13 @@
         OANDA.transaction.listSpecific(accountId, id, function(response) {
             var id = response.id;
             $("#transactionListSpecific").text('pass');
-            getInstruments();
+            getInstruments(accountId);
         });
     }
-    
-    function getInstruments()  {
+
+    function getInstruments(accountId)  {
         result.append("<tr><td>getInstruments</td><td id='getInstruments'>fail</td></tr>");
-        OANDA.rate.instruments(['pip'], [''], function(response) {
+        OANDA.rate.instruments(accountId, ['pip'], function(response) {
             var pip = response.instruments[0].pip;
             var inst = response.instruments[0].instrument;
             $("#getInstruments").text('pass');
